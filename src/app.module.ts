@@ -5,6 +5,7 @@ import * as Joi from 'joi';
 import { ControllerModule } from './controller/controller.module';
 import { Restaurant } from './restaurants/entities/restaurant.entity';
 import { User } from './users/entites/users.entiy';
+import { JwtModule } from './jwt/jwt.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { User } from './users/entites/users.entiy';
         DB_USERNAME: Joi.string().required(),
         DB_PASSWORD: Joi.string().required(),
         DB_DATABASE: Joi.string().required(),
+        SECRET_KEY: Joi.string().required(),
       }),
     }),
     TypeOrmModule.forRoot({
@@ -34,6 +36,7 @@ import { User } from './users/entites/users.entiy';
       logging: process.env.NODE_ENV !== 'prod',
       entities: [User, Restaurant],
     }),
+    JwtModule.forRoot(),
   ],
   controllers: [],
   providers: [],
