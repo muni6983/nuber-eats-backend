@@ -1,8 +1,8 @@
 import { InternalServerErrorException } from '@nestjs/common';
-import { IsString } from 'class-validator';
+import { IsEnum, IsString } from 'class-validator';
 import { CoreEntity } from 'src/common/entites/core.entity';
 import { BeforeInsert, Column, Entity } from 'typeorm';
-import { hash } from 'bcrypt';
+import { hash, compare } from 'bcrypt';
 export enum UserRole {
   CLIENT = 'client',
   OWNER = 'owner',
@@ -20,13 +20,23 @@ export class User extends CoreEntity {
   password: string;
 
   @Column({ type: 'enum', enum: UserRole, default: UserRole.CLIENT })
-  @IsString()
+  @IsEnum(UserRole)
   role: UserRole;
 
   @BeforeInsert()
   async hashPassword(): Promise<void> {
     try {
       this.password = await hash(this.password, 10);
+    } catch (e) {
+      console.log('error! :', e);
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async checkPassword(aPassword: string): Promise<boolean> {
+    try {
+      const ok = await compare(aPassword, this.password);
+      return ok;
     } catch (e) {
       console.log('error! :', e);
       throw new InternalServerErrorException();
