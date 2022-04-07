@@ -1,0 +1,2 @@
+@Resolver()
+export class RestaurantResolver {}
