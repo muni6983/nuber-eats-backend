@@ -7,6 +7,7 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
+import { AuthUser } from 'src/auth/auth-user.decorator';
 import { AuthGurard } from 'src/auth/auth.guard';
 import { MutationOutput } from 'src/common/dtos/output.dto';
 import { CreateUserDto, LoginDto, LoginOutput } from './dtos/users.dto';
@@ -19,8 +20,8 @@ export class UsersController {
 
   @Get('me')
   @UseGuards(AuthGurard)
-  me(@Request() req: Request) {
-    console.log('request user!! : ', req['user']);
+  me(@AuthUser() authUser: User) {
+    return authUser;
   }
 
   // @Header('Custom', 'Test Header')
