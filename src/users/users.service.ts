@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateUserDto, LoginDto } from './dtos/users.dto';
+import { CreateUserDto, LoginDto, UpdateUserDto } from './dtos/users.dto';
 import { User } from './entites/users.entiy';
 import { JwtService } from 'src/jwt/jwt.service';
 
@@ -51,5 +51,26 @@ export class UsersService {
 
   async findById(id: number): Promise<User> {
     return this.usersRepository.findOne({ id });
+  }
+
+  async updateMe(
+    userId: number,
+    { email, password }: UpdateUserDto,
+  ): Promise<User> {
+    const user = await this.usersRepository.findOne(userId);
+    if (email) {
+      user.email = email;
+    }
+    if (password) {
+      user.password = password;
+    }
+    return this.usersRepository.save(user);
+    //이렇게 update를 써서 변경하면 entity가 있는지 확인하지 않음
+    // 그래서 실제로는 어떤 entity도 update하고 있지 않고 그냥 쿼리만 보내는거
+    // BeforeUpdate 안됨
+  }
+
+  async getAllUsers() {
+    return this.usersRepository.find();
   }
 }

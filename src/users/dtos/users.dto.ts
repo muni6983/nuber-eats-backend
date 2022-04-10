@@ -1,5 +1,5 @@
-import { OmitType, PickType } from '@nestjs/mapped-types';
-import { IsString } from 'class-validator';
+import { OmitType, PartialType, PickType } from '@nestjs/mapped-types';
+import { IsNumber, IsString } from 'class-validator';
 import { MutationOutput } from 'src/common/dtos/output.dto';
 import { Column } from 'typeorm';
 import { User } from '../entites/users.entiy';
@@ -16,3 +16,13 @@ export class LoginOutput extends MutationOutput {
   @Column('string', { nullable: true })
   token?: string;
 }
+
+// export class UserProfileDto {
+//   @IsNumber()
+//   @Column()
+//   id: number;
+// }
+
+export class UpdateUserDto extends PartialType(
+  PickType(User, ['email', 'password']),
+) {}
