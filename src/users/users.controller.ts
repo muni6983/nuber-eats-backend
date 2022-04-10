@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Post, Req, Request } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
+import { AuthGurard } from 'src/auth/auth.guard';
 import { MutationOutput } from 'src/common/dtos/output.dto';
 import { CreateUserDto, LoginDto, LoginOutput } from './dtos/users.dto';
 import { User } from './entites/users.entiy';
@@ -7,7 +16,9 @@ import { UsersService } from './users.service';
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
+
   @Get('me')
+  @UseGuards(AuthGurard)
   me(@Request() req: Request) {
     console.log('request user!! : ', req['user']);
   }
