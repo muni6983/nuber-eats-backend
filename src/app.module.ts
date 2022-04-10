@@ -1,4 +1,9 @@
-import { Module } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as Joi from 'joi';
@@ -6,6 +11,8 @@ import { ControllerModule } from './controller/controller.module';
 import { Restaurant } from './restaurants/entities/restaurant.entity';
 import { User } from './users/entites/users.entiy';
 import { JwtModule } from './jwt/jwt.module';
+import { JwtMiddleware } from './jwt/jwt.middleware';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -39,8 +46,24 @@ import { JwtModule } from './jwt/jwt.module';
     JwtModule.forRoot({
       privateKey: process.env.PRIVATE_KEY,
     }),
+    AuthModule,
   ],
   controllers: [],
   providers: [],
 })
 export class AppModule {}
+
+//앱 전체에 사용하려면 main.ts에 추가
+
+// 이렇게 하면 특정 경로에서만 middleware 사용이 가능함
+// implements NestModule {
+//   configure(consumer: MiddlewareConsumer) {
+//     //JwtMiddleware를 forRoutes를 통해서
+//     //'/uesrs'인 경로(path)에
+//     //method가 POST인 경우에만 적용시킨다
+//     consumer.apply(jwtMiddleware).forRoutes({
+//       path: '/users',
+//       method: RequestMethod.POST,
+//     });
+//   }
+// }
