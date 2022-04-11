@@ -8,6 +8,6 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
   // 이건 functional component만 가능
   // app.use(JwtMiddleware);
-  await app.listen(8001);
+  await app.listen(3000);
 }
 bootstrap();
