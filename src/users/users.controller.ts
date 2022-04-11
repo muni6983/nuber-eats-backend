@@ -5,8 +5,6 @@ import {
   Param,
   Patch,
   Post,
-  Req,
-  Request,
   UseGuards,
 } from '@nestjs/common';
 import { AuthUser } from 'src/auth/auth-user.decorator';
@@ -44,42 +42,27 @@ export class UsersController {
 
   @Patch()
   @UseGuards(AuthGurard)
-  async updateMe(
+  updateMe(
     @Body() updateUserDto: UpdateUserDto,
     @AuthUser() authUser: User,
   ): Promise<MutationOutput> {
-    try {
-      await this.usersService.updateMe(authUser.id, updateUserDto);
-      return { ok: true };
-    } catch (error) {
-      return { ok: false, error };
-    }
+    return this.usersService.updateMe(authUser.id, updateUserDto);
   }
 
-  // @Header('Custom', 'Test Header')
   @Post('/login')
-  async login(@Body() loginDto: LoginDto): Promise<LoginOutput> {
-    try {
-      return this.usersService.login(loginDto);
-    } catch (error) {
-      return { ok: false, error };
-    }
+  login(@Body() loginDto: LoginDto): Promise<LoginOutput> {
+    return this.usersService.login(loginDto);
   }
 
   @Post('/email-verify')
-  async verifyEmail(@Body() verifyEmailDto: VerifyEmailDto) {
-    this.usersService.verifyEmail(verifyEmailDto.code);
+  verifyEmail(
+    @Body() verifyEmailDto: VerifyEmailDto,
+  ): Promise<VerifyEmailOutputDto> {
+    return this.usersService.verifyEmail(verifyEmailDto.code);
   }
 
   @Post()
-  async createUser(
-    @Body() createUserDto: CreateUserDto,
-  ): Promise<MutationOutput> {
-    try {
-      await this.usersService.createUser(createUserDto);
-      return { ok: true };
-    } catch (error) {
-      return { ok: false, error };
-    }
+  createUser(@Body() createUserDto: CreateUserDto): Promise<MutationOutput> {
+    return this.usersService.createUser(createUserDto);
   }
 }

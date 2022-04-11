@@ -62,22 +62,24 @@ export class UsersService {
     return this.usersRepository.findOne({ id });
   }
 
-  async updateMe(
-    userId: number,
-    { email, password }: UpdateUserDto,
-  ): Promise<User> {
-    const user = await this.usersRepository.findOne(userId);
-    if (email) {
-      user.email = email;
-      user.verified = false;
-      await this.verificationRepository.save(
-        this.verificationRepository.create({ user }),
-      );
+  async updateMe(userId: number, { email, password }: UpdateUserDto) {
+    try {
+      const user = await this.usersRepository.findOne(userId);
+      if (email) {
+        user.email = email;
+        user.verified = false;
+        await this.verificationRepository.save(
+          this.verificationRepository.create({ user }),
+        );
+      }
+      if (password) {
+        user.password = password;
+      }
+      this.usersRepository.save(user);
+      return { ok: true };
+    } catch (error) {
+      return { ok: false, error };
     }
-    if (password) {
-      user.password = password;
-    }
-    return this.usersRepository.save(user);
     //이렇게 update를 써서 변경하면 entity가 있는지 확인하지 않음
     // 그래서 실제로는 어떤 entity도 update하고 있지 않고 그냥 쿼리만 보내는거
     // BeforeUpdate 안됨
@@ -87,7 +89,7 @@ export class UsersService {
     return this.usersRepository.find();
   }
 
-  async verifyEmail(code: string): Promise<boolean> {
+  async verifyEmail(code: string) {
     try {
       const verification = await this.verificationRepository.findOne(
         { code },
@@ -98,12 +100,12 @@ export class UsersService {
       if (verification) {
         verification.user.verified = true;
         this.usersRepository.save(verification.user);
-        return true;
+        return { ok: true };
       }
-      throw new Error();
+      return { ok: false, error: 'Verification not found' };
     } catch (error) {
       console.log('error ! : ', error);
-      return false;
+      return { ok: false, error };
     }
   }
 }
