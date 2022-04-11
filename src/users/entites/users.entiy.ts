@@ -1,5 +1,5 @@
 import { InternalServerErrorException } from '@nestjs/common';
-import { IsBoolean, IsEnum, IsString } from 'class-validator';
+import { IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator';
 import { CoreEntity } from 'src/common/entites/core.entity';
 import { BeforeInsert, BeforeUpdate, Column, Entity } from 'typeorm';
 import { hash, compare } from 'bcrypt';
@@ -15,7 +15,7 @@ export class User extends CoreEntity {
   @IsString()
   email: string;
 
-  @Column()
+  @Column({ select: false })
   @IsString()
   password: string;
 
@@ -24,17 +24,20 @@ export class User extends CoreEntity {
   role: UserRole;
 
   @Column({ default: false })
+  @IsOptional()
   @IsBoolean()
   verified: boolean;
 
   @BeforeInsert()
   @BeforeUpdate()
   async hashPassword(): Promise<void> {
-    try {
-      this.password = await hash(this.password, 10);
-    } catch (e) {
-      console.log('error! :', e);
-      throw new InternalServerErrorException();
+    if (this.password) {
+      try {
+        this.password = await hash(this.password, 10);
+      } catch (e) {
+        console.log('error! :', e);
+        throw new InternalServerErrorException();
+      }
     }
   }
 

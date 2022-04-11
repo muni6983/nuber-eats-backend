@@ -4,11 +4,14 @@ import { Repository } from 'typeorm';
 import { CreateUserDto, LoginDto, UpdateUserDto } from './dtos/users.dto';
 import { User } from './entites/users.entiy';
 import { JwtService } from 'src/jwt/jwt.service';
+import { Verification } from './entites/verification.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private readonly usersRepository: Repository<User>,
+    @InjectRepository(Verification)
+    private readonly verificationRepository: Repository<Verification>,
     private readonly jwtService: JwtService,
   ) {}
 
@@ -20,8 +23,11 @@ export class UsersService {
       if (exist) {
         return { ok: false, error: 'There is a user with that email already' };
       }
-      await this.usersRepository.save(
+      const user = await this.usersRepository.save(
         this.usersRepository.create({ ...createUserDto }),
+      );
+      await this.verificationRepository.save(
+        this.verificationRepository.create({ user }),
       );
       return { ok: true };
     } catch (e) {
@@ -34,7 +40,10 @@ export class UsersService {
     password,
   }: LoginDto): Promise<{ ok: boolean; error?: string; token?: string }> {
     try {
-      const user = await this.usersRepository.findOne({ email });
+      const user = await this.usersRepository.findOne(
+        { email },
+        { select: ['password', 'id'] },
+      );
       if (!user) {
         return { ok: false, error: 'User not found' };
       }
@@ -60,6 +69,10 @@ export class UsersService {
     const user = await this.usersRepository.findOne(userId);
     if (email) {
       user.email = email;
+      user.verified = false;
+      await this.verificationRepository.save(
+        this.verificationRepository.create({ user }),
+      );
     }
     if (password) {
       user.password = password;
@@ -72,5 +85,25 @@ export class UsersService {
 
   async getAllUsers() {
     return this.usersRepository.find();
+  }
+
+  async verifyEmail(code: string): Promise<boolean> {
+    try {
+      const verification = await this.verificationRepository.findOne(
+        { code },
+        {
+          relations: ['user'],
+        },
+      );
+      if (verification) {
+        verification.user.verified = true;
+        this.usersRepository.save(verification.user);
+        return true;
+      }
+      throw new Error();
+    } catch (error) {
+      console.log('error ! : ', error);
+      return false;
+    }
   }
 }

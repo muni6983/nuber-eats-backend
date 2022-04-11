@@ -18,6 +18,7 @@ import {
   LoginOutput,
   UpdateUserDto,
 } from './dtos/users.dto';
+import { VerifyEmailDto, VerifyEmailOutputDto } from './dtos/verify-email.dto';
 import { User } from './entites/users.entiy';
 import { UsersService } from './users.service';
 
@@ -65,12 +66,18 @@ export class UsersController {
     }
   }
 
+  @Post('/email-verify')
+  async verifyEmail(@Body() verifyEmailDto: VerifyEmailDto) {
+    this.usersService.verifyEmail(verifyEmailDto.code);
+  }
+
   @Post()
   async createUser(
     @Body() createUserDto: CreateUserDto,
   ): Promise<MutationOutput> {
     try {
-      return this.usersService.createUser(createUserDto);
+      await this.usersService.createUser(createUserDto);
+      return { ok: true };
     } catch (error) {
       return { ok: false, error };
     }

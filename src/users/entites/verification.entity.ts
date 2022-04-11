@@ -1,6 +1,7 @@
 import { IsString } from 'class-validator';
+import { v4 as uuidv4 } from 'uuid';
 import { CoreEntity } from 'src/common/entites/core.entity';
-import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
+import { BeforeInsert, Column, Entity, JoinColumn, OneToOne } from 'typeorm';
 import { User } from './users.entiy';
 
 @Entity()
@@ -9,7 +10,12 @@ export class Verification extends CoreEntity {
   @IsString()
   code: string;
 
-  @OneToOne((type) => User)
+  @OneToOne((type) => User, { onDelete: 'CASCADE' })
   @JoinColumn()
   user: User;
+
+  @BeforeInsert()
+  createCode(): void {
+    this.code = uuidv4();
+  }
 }
