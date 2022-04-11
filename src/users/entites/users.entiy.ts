@@ -1,5 +1,5 @@
 import { InternalServerErrorException } from '@nestjs/common';
-import { IsEnum, IsString } from 'class-validator';
+import { IsBoolean, IsEnum, IsString } from 'class-validator';
 import { CoreEntity } from 'src/common/entites/core.entity';
 import { BeforeInsert, BeforeUpdate, Column, Entity } from 'typeorm';
 import { hash, compare } from 'bcrypt';
@@ -22,6 +22,10 @@ export class User extends CoreEntity {
   @Column({ type: 'enum', enum: UserRole, default: UserRole.CLIENT })
   @IsEnum(UserRole)
   role: UserRole;
+
+  @Column({ default: false })
+  @IsBoolean()
+  verified: boolean;
 
   @BeforeInsert()
   @BeforeUpdate()
