@@ -1,9 +1,4 @@
-import {
-  MiddlewareConsumer,
-  Module,
-  NestModule,
-  RequestMethod,
-} from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as Joi from 'joi';
@@ -11,9 +6,8 @@ import { ControllerModule } from './controller/controller.module';
 import { Restaurant } from './restaurants/entities/restaurant.entity';
 import { User } from './users/entites/users.entiy';
 import { JwtModule } from './jwt/jwt.module';
-import { JwtMiddleware } from './jwt/jwt.middleware';
-import { AuthModule } from './auth/auth.module';
 import { Verification } from './users/entites/verification.entity';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -30,6 +24,9 @@ import { Verification } from './users/entites/verification.entity';
         DB_PASSWORD: Joi.string().required(),
         DB_DATABASE: Joi.string().required(),
         PRIVATE_KEY: Joi.string().required(),
+        MAILGUN_API_KEY: Joi.string().required(),
+        MAILGUN_FROM_EMAIL: Joi.string().required(),
+        MAILGUN_DOMAIN: Joi.string().required(),
       }),
     }),
     TypeOrmModule.forRoot({
@@ -47,7 +44,11 @@ import { Verification } from './users/entites/verification.entity';
     JwtModule.forRoot({
       privateKey: process.env.PRIVATE_KEY,
     }),
-    AuthModule,
+    MailModule.forRoot({
+      apiKey: process.env.MAILGUN_API_KEY,
+      fromEmail: process.env.MAILGUN_FROM_EMAIL,
+      domain: process.env.MAILGUN_DOMAIN,
+    }),
   ],
   controllers: [],
   providers: [],
