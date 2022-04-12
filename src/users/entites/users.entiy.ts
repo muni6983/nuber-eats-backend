@@ -5,9 +5,9 @@ import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany } from 'typeorm';
 import { hash, compare } from 'bcrypt';
 import { Restaurant } from 'src/restaurants/entities/restaurant.entity';
 export enum UserRole {
-  CLIENT = 'client',
-  OWNER = 'owner',
-  DELIVERY = 'delivery',
+  CLIENT = 'CLIENT',
+  OWNER = 'OWNER',
+  DELIVERY = 'DELIVERY',
 }
 
 @Entity()

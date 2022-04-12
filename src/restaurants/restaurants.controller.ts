@@ -1,14 +1,7 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  Patch,
-  Post,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { AuthUser } from 'src/auth/auth-user.decorator';
-import { AuthGurard } from 'src/auth/auth.guard';
+import { Role } from 'src/auth/role.decorator';
+
 import { User } from 'src/users/entites/users.entiy';
 import {
   CreateRestaurantDto,
@@ -31,6 +24,7 @@ export class RestaurantsController {
   }
 
   @Post()
+  @Role(['OWNER'])
   createRestaurant(
     @AuthUser() authUser: User,
     @Body() createRestaurantDto: CreateRestaurantDto,

@@ -1,4 +1,4 @@
-import { OmitType, PickType } from '@nestjs/mapped-types';
+import { PickType } from '@nestjs/mapped-types';
 import { IsString } from 'class-validator';
 import { MutationOutput } from 'src/common/dtos/output.dto';
 import { Restaurant } from '../entities/restaurant.entity';
