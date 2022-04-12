@@ -1,5 +1,6 @@
 import { IsString } from 'class-validator';
 import { CoreEntity } from 'src/common/entites/core.entity';
+import { User } from 'src/users/entites/users.entiy';
 import { Column, Entity, ManyToOne } from 'typeorm';
 import { Category } from './category.entity';
 
@@ -17,6 +18,12 @@ export class Restaurant extends CoreEntity {
   @Column()
   address: string;
 
-  @ManyToOne((type) => Category, (category) => category.restaurants)
+  @ManyToOne((type) => Category, (category) => category.restaurants, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
   category: Category;
+
+  @ManyToOne((type) => User, (user) => user.restaurants)
+  owner: User;
 }

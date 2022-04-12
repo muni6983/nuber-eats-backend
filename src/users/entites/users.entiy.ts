@@ -1,8 +1,9 @@
 import { InternalServerErrorException } from '@nestjs/common';
 import { IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator';
 import { CoreEntity } from 'src/common/entites/core.entity';
-import { BeforeInsert, BeforeUpdate, Column, Entity } from 'typeorm';
+import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany } from 'typeorm';
 import { hash, compare } from 'bcrypt';
+import { Restaurant } from 'src/restaurants/entities/restaurant.entity';
 export enum UserRole {
   CLIENT = 'client',
   OWNER = 'owner',
@@ -27,6 +28,9 @@ export class User extends CoreEntity {
   @IsOptional()
   @IsBoolean()
   verified: boolean;
+
+  @OneToMany((type) => Restaurant, (restaurant) => restaurant.owner)
+  restaurants: Restaurant[];
 
   @BeforeInsert()
   @BeforeUpdate()
