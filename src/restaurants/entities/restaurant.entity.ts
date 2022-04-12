@@ -1,30 +1,22 @@
-import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { IsString } from 'class-validator';
+import { CoreEntity } from 'src/common/entites/core.entity';
+import { Column, Entity, ManyToOne } from 'typeorm';
+import { Category } from './category.entity';
 
 @Entity()
-export class Restaurant {
-  @PrimaryGeneratedColumn()
-  @IsNumber()
-  id: number;
-
+export class Restaurant extends CoreEntity {
   @IsString()
   @Column()
   name: string;
 
-  @IsOptional()
-  @IsBoolean()
-  @Column({ default: true })
-  isVegan: boolean;
+  @IsString()
+  @Column()
+  coverImg: string;
 
   @IsString()
   @Column()
   address: string;
 
-  @IsString()
-  @Column()
-  ownerName: string;
-
-  @IsString()
-  @Column()
-  categoryName: string;
+  @ManyToOne((type) => Category, (category) => category.restaurants)
+  category: Category;
 }

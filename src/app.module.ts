@@ -8,6 +8,7 @@ import { User } from './users/entites/users.entiy';
 import { JwtModule } from './jwt/jwt.module';
 import { Verification } from './users/entites/verification.entity';
 import { MailModule } from './mail/mail.module';
+import { Category } from './restaurants/entities/category.entity';
 
 @Module({
   imports: [
@@ -39,7 +40,7 @@ import { MailModule } from './mail/mail.module';
       autoLoadEntities: true,
       synchronize: process.env.NODE_ENV !== 'prod',
       logging: process.env.NODE_ENV !== 'prod',
-      entities: [User, Restaurant, Verification],
+      entities: [User, Restaurant, Verification, Category],
     }),
     JwtModule.forRoot({
       privateKey: process.env.PRIVATE_KEY,
