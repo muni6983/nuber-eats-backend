@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { MutationOutput } from 'src/common/dtos/output.dto';
 import { User } from 'src/users/entites/users.entiy';
 import { Repository } from 'typeorm';
+import { AllCategoriesOutput } from './dtos/category.dto';
 import {
   CreateRestaurantDto,
   CreateRestaurantOutput,
@@ -22,7 +22,7 @@ export class RestaurantsService {
     private readonly categoryRepository: CategoryRepository,
   ) {}
 
-  getAll() {
+  getAllRestaurants() {
     return this.restaurantsRepository.find();
   }
 
@@ -102,5 +102,14 @@ export class RestaurantsService {
       return { ok: false, error: "Couldn't delete the Restaurant'" };
     }
     return { ok: true };
+  }
+
+  async getAllCategories(): Promise<AllCategoriesOutput> {
+    try {
+      const categories = await this.categoryRepository.find();
+      return { ok: true, categories };
+    } catch (error) {
+      return { ok: false, error: "Couldn't load categories" };
+    }
   }
 }

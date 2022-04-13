@@ -11,7 +11,7 @@ export class Restaurant extends CoreEntity {
   name: string;
 
   @IsString()
-  @Column({ default: 'coverImageee' })
+  @Column({ default: null })
   coverImg: string;
 
   @IsString()

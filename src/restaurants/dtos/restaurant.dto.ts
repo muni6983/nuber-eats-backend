@@ -1,5 +1,5 @@
 import { PartialType, PickType } from '@nestjs/mapped-types';
-import { IsString } from 'class-validator';
+import { IsNumber, IsString } from 'class-validator';
 import { MutationOutput } from 'src/common/dtos/output.dto';
 import { Column } from 'typeorm';
 import { Restaurant } from '../entities/restaurant.entity';

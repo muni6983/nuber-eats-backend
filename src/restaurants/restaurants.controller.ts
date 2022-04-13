@@ -6,12 +6,12 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { AuthUser } from 'src/auth/auth-user.decorator';
 import { Role } from 'src/auth/role.decorator';
-import { MutationOutput } from 'src/common/dtos/output.dto';
-
 import { User } from 'src/users/entites/users.entiy';
+import { AllCategoriesOutput } from './dtos/category.dto';
 import {
   CreateRestaurantDto,
   CreateRestaurantOutput,
@@ -21,13 +21,13 @@ import {
 } from './dtos/restaurant.dto';
 import { RestaurantsService } from './restaurants.service';
 
-@Controller('restaurant')
+@Controller('restaurants')
 export class RestaurantsController {
   constructor(private readonly restaurantsService: RestaurantsService) {}
 
   @Get()
-  getAll() {
-    return this.restaurantsService.getAll();
+  getAllRestaurants() {
+    return this.restaurantsService.getAllRestaurants();
   }
 
   @Get('me')
@@ -74,5 +74,15 @@ export class RestaurantsController {
     @Param('id') restaurantId: string,
   ): Promise<DeleteRestaurantOutput> {
     return this.restaurantsService.deleteRestaurant(owner, +restaurantId);
+  }
+}
+
+@Controller('categories')
+export class CategoryController {
+  constructor(private readonly restaurantsService: RestaurantsService) {}
+
+  @Get()
+  getAllCategories(): Promise<AllCategoriesOutput> {
+    return this.restaurantsService.getAllCategories();
   }
 }

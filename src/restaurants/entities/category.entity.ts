@@ -1,4 +1,4 @@
-import { IsString } from 'class-validator';
+import { IsNumber, IsString } from 'class-validator';
 import { CoreEntity } from 'src/common/entites/core.entity';
 import { Column, Entity, OneToMany } from 'typeorm';
 import { Restaurant } from './restaurant.entity';
