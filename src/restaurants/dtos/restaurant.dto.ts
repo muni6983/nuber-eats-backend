@@ -19,3 +19,5 @@ export class CreateRestaurantOutput extends MutationOutput {}
 export class EditRestaurantDto extends PartialType(CreateRestaurantDto) {}
 
 export class EditRestaurantOutput extends MutationOutput {}
+
+export class DeleteRestaurantOutput extends MutationOutput {}

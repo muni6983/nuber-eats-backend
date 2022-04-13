@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { MutationOutput } from 'src/common/dtos/output.dto';
 import { User } from 'src/users/entites/users.entiy';
 import { Repository } from 'typeorm';
 import {
   CreateRestaurantDto,
   CreateRestaurantOutput,
+  DeleteRestaurantOutput,
   EditRestaurantDto,
   EditRestaurantOutput,
 } from './dtos/restaurant.dto';
@@ -54,8 +56,6 @@ export class RestaurantsService {
     restaurantId: number,
   ): Promise<EditRestaurantOutput> {
     try {
-      console.log('restaurant Id typ222222 : ', typeof restaurantId);
-
       const restaurant = await this.restaurantsRepository.findOne(restaurantId);
       if (!restaurant) {
         return { ok: false, error: 'Restaurant not found' };
@@ -79,6 +79,27 @@ export class RestaurantsService {
       });
     } catch (error) {
       return { ok: false, error: "Coudn't edit Restaurant" };
+    }
+    return { ok: true };
+  }
+  async deleteRestaurant(
+    owner: User,
+    restaurantId: number,
+  ): Promise<DeleteRestaurantOutput> {
+    try {
+      const restaurant = await this.restaurantsRepository.findOne(restaurantId);
+      if (!restaurant) {
+        return { ok: false, error: 'Restaurant not found' };
+      }
+      if (owner.id !== restaurant.ownerId) {
+        return {
+          ok: false,
+          error: "You can't delete a restaurant that you don't own",
+        };
+      }
+      await this.restaurantsRepository.delete(restaurantId);
+    } catch (error) {
+      return { ok: false, error: "Couldn't delete the Restaurant'" };
     }
     return { ok: true };
   }

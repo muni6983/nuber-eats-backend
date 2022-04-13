@@ -1,11 +1,21 @@
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { AuthUser } from 'src/auth/auth-user.decorator';
 import { Role } from 'src/auth/role.decorator';
+import { MutationOutput } from 'src/common/dtos/output.dto';
 
 import { User } from 'src/users/entites/users.entiy';
 import {
   CreateRestaurantDto,
   CreateRestaurantOutput,
+  DeleteRestaurantOutput,
   EditRestaurantDto,
   EditRestaurantOutput,
 } from './dtos/restaurant.dto';
@@ -55,5 +65,14 @@ export class RestaurantsController {
       editRestaurantDto,
       +restaurantId,
     );
+  }
+
+  @Delete('/:id')
+  @Role(['OWNER'])
+  deleteRestaurant(
+    @AuthUser() owner: User,
+    @Param('id') restaurantId: string,
+  ): Promise<DeleteRestaurantOutput> {
+    return this.restaurantsService.deleteRestaurant(owner, +restaurantId);
   }
 }
