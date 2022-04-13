@@ -11,7 +11,7 @@ import {
 import { AuthUser } from 'src/auth/auth-user.decorator';
 import { Role } from 'src/auth/role.decorator';
 import { User } from 'src/users/entites/users.entiy';
-import { AllCategoriesOutput } from './dtos/category.dto';
+import { AllCategoriesOutput, CategoryOutput } from './dtos/category.dto';
 import {
   CreateRestaurantDto,
   CreateRestaurantOutput,
@@ -80,6 +80,11 @@ export class RestaurantsController {
 @Controller('categories')
 export class CategoryController {
   constructor(private readonly restaurantsService: RestaurantsService) {}
+
+  @Get()
+  findCategoryBySlug(@Query('slug') slugName: string): Promise<CategoryOutput> {
+    return this.restaurantsService.findCategoryBySlug(slugName);
+  }
 
   @Get()
   getAllCategories(): Promise<AllCategoriesOutput> {
