@@ -1,7 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateUserDto, LoginDto, UpdateUserDto } from './dtos/users.dto';
+import {
+  CreateUserDto,
+  LoginDto,
+  UpdateUserDto,
+  UserOutput,
+} from './dtos/users.dto';
 import { User } from './entites/users.entiy';
 import { JwtService } from 'src/jwt/jwt.service';
 import { Verification } from './entites/verification.entity';
@@ -89,8 +94,21 @@ export class UsersService {
     // BeforeUpdate 안됨
   }
 
-  async getAllUsers() {
-    return this.usersRepository.find();
+  async getAllUsers(page: number): Promise<UserOutput> {
+    try {
+      const [users, totalResults] = await this.usersRepository.findAndCount({
+        take: 25,
+        skip: (page - 1) * 25,
+      });
+      return {
+        ok: true,
+        users,
+        totalPages: Math.ceil(totalResults / 25),
+        totalItems: totalResults,
+      };
+    } catch (error) {
+      return { ok: false, error: "Could't load users" };
+    }
   }
 
   async verifyEmail(code: string) {

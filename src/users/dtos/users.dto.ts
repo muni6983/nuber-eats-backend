@@ -1,6 +1,7 @@
 import { OmitType, PartialType, PickType } from '@nestjs/mapped-types';
-import { IsNumber, IsString } from 'class-validator';
+import { IsArray, IsNumber, IsString } from 'class-validator';
 import { MutationOutput } from 'src/common/dtos/output.dto';
+import { PaginationOutput } from 'src/common/dtos/pagination.dto';
 import { Column } from 'typeorm';
 import { User } from '../entites/users.entiy';
 
@@ -26,3 +27,9 @@ export class LoginOutput extends MutationOutput {
 export class UpdateUserDto extends PartialType(
   PickType(User, ['email', 'password']),
 ) {}
+
+export class UserOutput extends PaginationOutput {
+  @Column({ nullable: true })
+  @IsArray()
+  users?: User[];
+}
