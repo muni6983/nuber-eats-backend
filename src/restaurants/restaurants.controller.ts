@@ -18,6 +18,7 @@ import {
   DeleteRestaurantOutput,
   EditRestaurantDto,
   EditRestaurantOutput,
+  RestaurantOuput,
 } from './dtos/restaurant.dto';
 import { RestaurantsService } from './restaurants.service';
 
@@ -26,8 +27,8 @@ export class RestaurantsController {
   constructor(private readonly restaurantsService: RestaurantsService) {}
 
   @Get()
-  getAllRestaurants() {
-    return this.restaurantsService.getAllRestaurants();
+  getAllRestaurants(@Query('page') page: number): Promise<RestaurantOuput> {
+    return this.restaurantsService.getAllRestaurants(page);
   }
 
   @Get('me')

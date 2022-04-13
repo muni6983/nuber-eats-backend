@@ -22,8 +22,22 @@ export class RestaurantsService {
     private readonly categoryRepository: CategoryRepository,
   ) {}
 
-  getAllRestaurants() {
-    return this.restaurantsRepository.find();
+  async getAllRestaurants(page: number) {
+    try {
+      const [restaurants, totalResults] =
+        await this.restaurantsRepository.findAndCount({
+          take: 25,
+          skip: (page - 1) * 25,
+        });
+      return {
+        ok: true,
+        totalPages: Math.ceil(totalResults / 25),
+        totalItems: totalResults,
+        results: restaurants,
+      };
+    } catch (error) {
+      return { ok: false, error: "Couldn't load restaurants" };
+    }
   }
 
   async getRestaurantById(id: number) {
