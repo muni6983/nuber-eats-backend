@@ -82,12 +82,15 @@ export class CategoryController {
   constructor(private readonly restaurantsService: RestaurantsService) {}
 
   @Get()
-  findCategoryBySlug(@Query('slug') slugName: string): Promise<CategoryOutput> {
-    return this.restaurantsService.findCategoryBySlug(slugName);
+  getAllCategories(@Query('page') page: number): Promise<AllCategoriesOutput> {
+    return this.restaurantsService.getAllCategories(page);
   }
 
-  @Get()
-  getAllCategories(): Promise<AllCategoriesOutput> {
-    return this.restaurantsService.getAllCategories();
+  @Get('/slug')
+  findCategoryBySlug(
+    @Query('slug') slugName: string,
+    @Query('page') page: number,
+  ): Promise<CategoryOutput> {
+    return this.restaurantsService.findCategoryBySlug(slugName, page);
   }
 }

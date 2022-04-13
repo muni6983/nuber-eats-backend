@@ -104,16 +104,22 @@ export class RestaurantsService {
     return { ok: true };
   }
 
-  async getAllCategories(): Promise<AllCategoriesOutput> {
+  async getAllCategories(page: number): Promise<AllCategoriesOutput> {
     try {
-      const categories = await this.categoryRepository.find();
+      const categories = await this.categoryRepository.find({
+        take: 25,
+        skip: (page - 1) * 25,
+      });
       return { ok: true, categories };
     } catch (error) {
       return { ok: false, error: "Couldn't load categories" };
     }
   }
 
-  async findCategoryBySlug(slugName: string): Promise<CategoryOutput> {
+  async findCategoryBySlug(
+    slugName: string,
+    page: number,
+  ): Promise<CategoryOutput> {
     try {
       const category = await this.categoryRepository.findOne(
         {
@@ -124,9 +130,17 @@ export class RestaurantsService {
       if (!category) {
         return { ok: false, error: 'Category not found' };
       }
+      const restaurants = await this.restaurantsRepository.find({
+        where: { category },
+        take: 25,
+        skip: (page - 1) * 25,
+      });
+      category.restaurants = restaurants;
       return { ok: true, category };
     } catch (error) {
       return { ok: false, error: "Couldn't load category'" };
     }
+    // return 에 totalPages 추가해줘야하는데
+    //해당 카테고리를 가진 restaurant 개수를 어떻게 받아와야할지 모르겠음
   }
 }
