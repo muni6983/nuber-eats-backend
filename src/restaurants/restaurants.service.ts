@@ -120,11 +120,17 @@ export class RestaurantsService {
 
   async getAllCategories(page: number): Promise<AllCategoriesOutput> {
     try {
-      const categories = await this.categoryRepository.find({
-        take: 25,
-        skip: (page - 1) * 25,
-      });
-      return { ok: true, categories };
+      const [categories, totalResults] =
+        await this.categoryRepository.findAndCount({
+          take: 25,
+          skip: (page - 1) * 25,
+        });
+      return {
+        ok: true,
+        totalPages: Math.ceil(totalResults / 25),
+        totalItems: totalResults,
+        categories,
+      };
     } catch (error) {
       return { ok: false, error: "Couldn't load categories" };
     }

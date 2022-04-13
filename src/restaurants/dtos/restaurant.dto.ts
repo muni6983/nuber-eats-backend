@@ -26,5 +26,5 @@ export class DeleteRestaurantOutput extends MutationOutput {}
 export class RestaurantOuput extends PaginationOutput {
   @Column({ nullable: true })
   @IsArray()
-  restaurants?: Restaurant[];
+  results?: Restaurant[];
 }
