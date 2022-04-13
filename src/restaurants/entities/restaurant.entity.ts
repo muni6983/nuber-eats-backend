@@ -1,7 +1,7 @@
 import { IsString } from 'class-validator';
 import { CoreEntity } from 'src/common/entites/core.entity';
 import { User } from 'src/users/entites/users.entiy';
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { Column, Entity, ManyToOne, RelationId } from 'typeorm';
 import { Category } from './category.entity';
 
 @Entity()
@@ -11,7 +11,7 @@ export class Restaurant extends CoreEntity {
   name: string;
 
   @IsString()
-  @Column()
+  @Column({ default: 'coverImageee' })
   coverImg: string;
 
   @IsString()
@@ -28,4 +28,8 @@ export class Restaurant extends CoreEntity {
     onDelete: 'CASCADE',
   })
   owner: User;
+
+  @IsString()
+  @RelationId((restaurant: Restaurant) => restaurant.owner)
+  ownerId: number;
 }

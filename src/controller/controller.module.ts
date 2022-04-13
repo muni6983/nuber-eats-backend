@@ -9,6 +9,6 @@ import { UsersModule } from 'src/users/users.module';
 })
 export class ControllerModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(JwtMiddleware).forRoutes('users');
+    consumer.apply(JwtMiddleware).forRoutes('*');
   }
 }
