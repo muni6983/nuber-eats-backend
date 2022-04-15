@@ -28,3 +28,20 @@ export class RestaurantOuput extends PaginationOutput {
   @IsArray()
   results?: Restaurant[];
 }
+
+export class FindRestaurantOutput extends MutationOutput {
+  @Column({ nullable: true })
+  restaurant?: Restaurant;
+}
+
+export class SearchRestaurantDto {
+  @Column()
+  @IsString()
+  query: string;
+}
+
+export class SearchRestaurantOutput extends PaginationOutput {
+  @Column({ nullable: true })
+  @IsArray()
+  restaurants?: Restaurant[];
+}

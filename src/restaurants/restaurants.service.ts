@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entites/users.entiy';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { AllCategoriesOutput, CategoryOutput } from './dtos/category.dto';
 import {
   CreateRestaurantDto,
@@ -9,6 +9,8 @@ import {
   DeleteRestaurantOutput,
   EditRestaurantDto,
   EditRestaurantOutput,
+  FindRestaurantOutput,
+  SearchRestaurantOutput,
 } from './dtos/restaurant.dto';
 import { Category } from './entities/category.entity';
 import { Restaurant } from './entities/restaurant.entity';
@@ -32,7 +34,7 @@ export class RestaurantsService {
       return {
         ok: true,
         totalPages: Math.ceil(totalResults / 25),
-        totalItems: totalResults,
+        totalResults,
         results: restaurants,
       };
     } catch (error) {
@@ -40,9 +42,41 @@ export class RestaurantsService {
     }
   }
 
-  async getRestaurantById(id: number) {
-    const findRestaurant = await this.restaurantsRepository.findOne({ id });
-    return findRestaurant;
+  async getRestaurantById(id: number): Promise<FindRestaurantOutput> {
+    try {
+      const restaurant = await this.restaurantsRepository.findOne({ id });
+      if (!restaurant) {
+        return { ok: false, error: 'Restaurant not found' };
+      }
+      return { ok: true, restaurant };
+    } catch (error) {
+      return { ok: false, error: "Couldn't find restaurant" };
+    }
+  }
+
+  async searchRestaurantByName(
+    query: string,
+    page: number,
+  ): Promise<SearchRestaurantOutput> {
+    try {
+      const [restaurants, totalResults] =
+        await this.restaurantsRepository.findAndCount({
+          where: {
+            name: ILike(`%${query}%`),
+          },
+          take: 25,
+          skip: (page - 1) * 25,
+        });
+
+      return {
+        ok: true,
+        totalPages: Math.ceil(totalResults / 25),
+        totalResults,
+        restaurants,
+      };
+    } catch (error) {
+      return { ok: false, error: "Couldn't search for restaurants" };
+    }
   }
 
   async createRestaurant(
@@ -128,7 +162,7 @@ export class RestaurantsService {
       return {
         ok: true,
         totalPages: Math.ceil(totalResults / 25),
-        totalItems: totalResults,
+        totalResults,
         categories,
       };
     } catch (error) {

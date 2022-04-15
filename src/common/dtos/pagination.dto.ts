@@ -14,5 +14,5 @@ export class PaginationOutput extends MutationOutput {
   totalPages?: number;
   @Column({ nullable: true })
   @IsNumber()
-  totalItems?: number;
+  totalResults?: number;
 }

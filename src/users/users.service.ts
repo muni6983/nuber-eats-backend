@@ -104,7 +104,7 @@ export class UsersService {
         ok: true,
         users,
         totalPages: Math.ceil(totalResults / 25),
-        totalItems: totalResults,
+        totalResults,
       };
     } catch (error) {
       return { ok: false, error: "Could't load users" };

@@ -18,7 +18,9 @@ import {
   DeleteRestaurantOutput,
   EditRestaurantDto,
   EditRestaurantOutput,
+  FindRestaurantOutput,
   RestaurantOuput,
+  SearchRestaurantOutput,
 } from './dtos/restaurant.dto';
 import { RestaurantsService } from './restaurants.service';
 
@@ -37,9 +39,17 @@ export class RestaurantsController {
     return authUser;
   }
 
+  @Get('search')
+  searchRestaurantByName(
+    @Query('query') query: string,
+    @Query('page') page: number,
+  ): Promise<SearchRestaurantOutput> {
+    return this.restaurantsService.searchRestaurantByName(query, page);
+  }
+
   @Get('/:id')
-  getRestaurantById(@Param('id') id: number) {
-    return this.restaurantsService.getRestaurantById(id);
+  getRestaurantById(@Param('id') id: string): Promise<FindRestaurantOutput> {
+    return this.restaurantsService.getRestaurantById(+id);
   }
 
   @Post()
