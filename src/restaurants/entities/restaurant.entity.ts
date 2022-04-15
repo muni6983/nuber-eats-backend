@@ -1,8 +1,9 @@
 import { IsString } from 'class-validator';
 import { CoreEntity } from 'src/common/entites/core.entity';
 import { User } from 'src/users/entites/users.entiy';
-import { Column, Entity, ManyToOne, RelationId } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany, RelationId } from 'typeorm';
 import { Category } from './category.entity';
+import { Dish } from './dish.entity';
 
 @Entity()
 export class Restaurant extends CoreEntity {
@@ -23,6 +24,9 @@ export class Restaurant extends CoreEntity {
     onDelete: 'SET NULL',
   })
   category: Category;
+
+  @OneToMany((type) => Dish, (dish) => dish.restaurant)
+  menu: Dish[];
 
   @ManyToOne((type) => User, (user) => user.restaurants, {
     onDelete: 'CASCADE',
