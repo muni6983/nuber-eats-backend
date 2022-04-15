@@ -126,6 +126,16 @@ export class DishController {
     return this.restaurantsService.createDish(owner, createDishDto);
   }
 
+  @Patch('/:id')
+  @Role(['OWNER'])
+  editDish(
+    @AuthUser() owner: User,
+    @Param('id') dishId: string,
+    @Body() editDishDto: EditDishDto,
+  ): Promise<EditDishOuput> {
+    return this.restaurantsService.editDish(owner, editDishDto, +dishId);
+  }
+
   @Delete('/:id')
   @Role(['OWNER'])
   deleteDish(

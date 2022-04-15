@@ -9,7 +9,16 @@ import { CoreEntity } from 'src/common/entites/core.entity';
 import { Column, Entity, ManyToOne, OneToMany, RelationId } from 'typeorm';
 import { Restaurant } from './restaurant.entity';
 
-export class DishOption {
+class DishChoice {
+  @Column()
+  @IsString()
+  name: string;
+
+  @Column({ nullable: true })
+  @IsNumber()
+  extra?: number;
+}
+class DishOption {
   @Column()
   @IsString()
   name: string;
@@ -20,7 +29,7 @@ export class DishOption {
 
   @Column({ nullable: true })
   @IsArray()
-  choices?: string[];
+  choices?: DishChoice[];
 }
 
 @Entity()

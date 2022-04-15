@@ -235,6 +235,32 @@ export class RestaurantsService {
     }
   }
 
+  async editDish(
+    owner: User,
+    editDishDto: EditDishDto,
+    dishId: number,
+  ): Promise<EditDishOuput> {
+    try {
+      const dish = await this.dishRepository.findOne({
+        where: { id: dishId },
+        relations: ['restaurant'],
+      });
+      if (!dish) {
+        return { ok: false, error: 'Dish not found' };
+      }
+      if (dish.restaurant.ownerId !== owner.id) {
+        return { ok: false, error: "You can't edit the dish" };
+      }
+      await this.dishRepository.save({
+        id: dishId,
+        ...editDishDto,
+      });
+      return { ok: true, dish };
+    } catch (error) {
+      return { ok: false, error: "Couldn't edit the dish" };
+    }
+  }
+
   async deleteDish(owner: User, dishId: number): Promise<DeleteDishOutput> {
     try {
       const dish = await this.dishRepository.findOne({

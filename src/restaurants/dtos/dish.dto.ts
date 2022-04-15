@@ -25,4 +25,7 @@ export class EditDishDto extends PickType(PartialType(Dish), [
   'options',
 ]) {}
 
-export class EditDishOuput extends MutationOutput {}
+export class EditDishOuput extends MutationOutput {
+  @Column()
+  dish?: Dish;
+}
