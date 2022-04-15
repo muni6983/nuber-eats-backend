@@ -1,7 +1,21 @@
-import { IsNumber, IsString, Length } from 'class-validator';
+import { IsArray, IsNumber, IsString, Length } from 'class-validator';
 import { CoreEntity } from 'src/common/entites/core.entity';
 import { Column, Entity, ManyToOne, OneToMany, RelationId } from 'typeorm';
 import { Restaurant } from './restaurant.entity';
+
+export class DishOption {
+  @Column()
+  @IsString()
+  name: string;
+
+  @Column()
+  @IsNumber()
+  extra: number;
+
+  @Column()
+  @IsArray()
+  choices: string[];
+}
 
 @Entity()
 export class Dish extends CoreEntity {
@@ -30,4 +44,8 @@ export class Dish extends CoreEntity {
   @IsString()
   @RelationId((dish: Dish) => dish.restaurant)
   restaurantId: number;
+
+  @Column({ type: 'json' })
+  @IsArray()
+  options: DishOption[];
 }
