@@ -12,6 +12,7 @@ import { AuthUser } from 'src/auth/auth-user.decorator';
 import { Role } from 'src/auth/role.decorator';
 import { User } from 'src/users/entites/users.entiy';
 import { AllCategoriesOutput, CategoryOutput } from './dtos/category.dto';
+import { CreateDishDto, CreateDishOutput } from './dtos/dish.dto';
 import {
   CreateRestaurantDto,
   CreateRestaurantOutput,
@@ -103,5 +104,19 @@ export class CategoryController {
     @Query('page') page: number,
   ): Promise<CategoryOutput> {
     return this.restaurantsService.findCategoryBySlug(slugName, page);
+  }
+}
+
+@Controller('dishes')
+export class DishController {
+  constructor(private readonly restaurantsService: RestaurantsService) {}
+
+  @Post()
+  @Role(['OWNER'])
+  createDish(
+    @AuthUser() owner: User,
+    @Body() createDishDto: CreateDishDto,
+  ): Promise<CreateDishOutput> {
+    return this.restaurantsService.createDish(owner, createDishDto);
   }
 }

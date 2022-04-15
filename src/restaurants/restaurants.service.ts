@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entites/users.entiy';
 import { ILike, Repository } from 'typeorm';
 import { AllCategoriesOutput, CategoryOutput } from './dtos/category.dto';
+import { CreateDishDto, CreateDishOutput } from './dtos/dish.dto';
 import {
   CreateRestaurantDto,
   CreateRestaurantOutput,
@@ -13,6 +14,7 @@ import {
   SearchRestaurantOutput,
 } from './dtos/restaurant.dto';
 import { Category } from './entities/category.entity';
+import { Dish } from './entities/dish.entity';
 import { Restaurant } from './entities/restaurant.entity';
 import { CategoryRepository } from './repositories/category.repository';
 
@@ -21,6 +23,9 @@ export class RestaurantsService {
   constructor(
     @InjectRepository(Restaurant)
     private readonly restaurantsRepository: Repository<Restaurant>,
+    @InjectRepository(Dish)
+    private readonly dishRepository: Repository<Dish>,
+
     private readonly categoryRepository: CategoryRepository,
   ) {}
 
@@ -44,7 +49,10 @@ export class RestaurantsService {
 
   async getRestaurantById(id: number): Promise<FindRestaurantOutput> {
     try {
-      const restaurant = await this.restaurantsRepository.findOne({ id });
+      const restaurant = await this.restaurantsRepository.findOne(
+        { id },
+        { relations: ['owner', 'menu'] },
+      );
       if (!restaurant) {
         return { ok: false, error: 'Restaurant not found' };
       }
@@ -92,7 +100,7 @@ export class RestaurantsService {
       );
       newRestaurant.category = category;
       await this.restaurantsRepository.save(newRestaurant);
-      return { ok: true };
+      return { ok: true, restaurant: newRestaurant };
     } catch (error) {
       return { ok: false, error: "Couldn't create Restaurant'" };
     }
@@ -196,5 +204,28 @@ export class RestaurantsService {
     }
     // return 에 totalPages 추가해줘야하는데
     //해당 카테고리를 가진 restaurant 개수를 어떻게 받아와야할지 모르겠음
+  }
+
+  async createDish(
+    owner: User,
+    createDishDto: CreateDishDto,
+  ): Promise<CreateDishOutput> {
+    try {
+      const restaurant = await this.restaurantsRepository.findOne(
+        createDishDto.restaurantId,
+      );
+      if (!restaurant) {
+        return { ok: false, error: 'Restaurant not found' };
+      }
+      if (owner.id !== restaurant.ownerId) {
+        return { ok: false, error: "You can't create Dish" };
+      }
+      const dish = await this.dishRepository.save(
+        this.dishRepository.create({ ...createDishDto, restaurant }),
+      );
+      return { ok: true, dish };
+    } catch (error) {
+      return { ok: false, error: "Couldn't create dish" };
+    }
   }
 }

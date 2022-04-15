@@ -15,7 +15,10 @@ export class CreateRestaurantDto extends PickType(Restaurant, [
   categoryName: string;
 }
 
-export class CreateRestaurantOutput extends MutationOutput {}
+export class CreateRestaurantOutput extends MutationOutput {
+  @Column()
+  restaurant?: Restaurant;
+}
 
 export class EditRestaurantDto extends PartialType(CreateRestaurantDto) {}
 

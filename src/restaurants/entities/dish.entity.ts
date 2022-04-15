@@ -1,4 +1,10 @@
-import { IsArray, IsNumber, IsString, Length } from 'class-validator';
+import {
+  IsArray,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Length,
+} from 'class-validator';
 import { CoreEntity } from 'src/common/entites/core.entity';
 import { Column, Entity, ManyToOne, OneToMany, RelationId } from 'typeorm';
 import { Restaurant } from './restaurant.entity';
@@ -8,13 +14,13 @@ export class DishOption {
   @IsString()
   name: string;
 
-  @Column()
+  @Column({ nullable: true })
   @IsNumber()
-  extra: number;
+  extra?: number;
 
-  @Column()
+  @Column({ nullable: true })
   @IsArray()
-  choices: string[];
+  choices?: string[];
 }
 
 @Entity()
@@ -28,7 +34,7 @@ export class Dish extends CoreEntity {
   price: number;
 
   @IsString()
-  @Column()
+  @Column({ nullable: true })
   photo: string;
 
   @IsString()
@@ -41,11 +47,12 @@ export class Dish extends CoreEntity {
   })
   restaurant: Restaurant;
 
-  @IsString()
+  @IsNumber()
   @RelationId((dish: Dish) => dish.restaurant)
   restaurantId: number;
 
-  @Column({ type: 'json' })
+  @Column({ type: 'json', nullable: true })
+  @IsOptional()
   @IsArray()
-  options: DishOption[];
+  options?: DishOption[];
 }
