@@ -4,6 +4,7 @@ import { CoreEntity } from 'src/common/entites/core.entity';
 import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany } from 'typeorm';
 import { hash, compare } from 'bcrypt';
 import { Restaurant } from 'src/restaurants/entities/restaurant.entity';
+import { Order } from 'src/orders/entities/order.entity';
 export enum UserRole {
   CLIENT = 'CLIENT',
   OWNER = 'OWNER',
@@ -31,6 +32,12 @@ export class User extends CoreEntity {
 
   @OneToMany((type) => Restaurant, (restaurant) => restaurant.owner)
   restaurants: Restaurant[];
+
+  @OneToMany((type) => Order, (order) => order.customer)
+  orders: Order[];
+
+  @OneToMany((type) => Order, (order) => order.driver)
+  rides: Order[];
 
   @BeforeInsert()
   @BeforeUpdate()

@@ -1,5 +1,6 @@
 import { IsString } from 'class-validator';
 import { CoreEntity } from 'src/common/entites/core.entity';
+import { Order } from 'src/orders/entities/order.entity';
 import { User } from 'src/users/entites/users.entiy';
 import { Column, Entity, ManyToOne, OneToMany, RelationId } from 'typeorm';
 import { Category } from './category.entity';
@@ -32,6 +33,9 @@ export class Restaurant extends CoreEntity {
     onDelete: 'CASCADE',
   })
   owner: User;
+
+  @OneToMany((type) => Order, (order) => order.restaurant)
+  orders: Order[];
 
   @IsString()
   @RelationId((restaurant: Restaurant) => restaurant.owner)
