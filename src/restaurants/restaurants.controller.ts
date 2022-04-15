@@ -12,7 +12,13 @@ import { AuthUser } from 'src/auth/auth-user.decorator';
 import { Role } from 'src/auth/role.decorator';
 import { User } from 'src/users/entites/users.entiy';
 import { AllCategoriesOutput, CategoryOutput } from './dtos/category.dto';
-import { CreateDishDto, CreateDishOutput } from './dtos/dish.dto';
+import {
+  CreateDishDto,
+  CreateDishOutput,
+  DeleteDishOutput,
+  EditDishDto,
+  EditDishOuput,
+} from './dtos/dish.dto';
 import {
   CreateRestaurantDto,
   CreateRestaurantOutput,
@@ -118,5 +124,14 @@ export class DishController {
     @Body() createDishDto: CreateDishDto,
   ): Promise<CreateDishOutput> {
     return this.restaurantsService.createDish(owner, createDishDto);
+  }
+
+  @Delete('/:id')
+  @Role(['OWNER'])
+  deleteDish(
+    @AuthUser() owner: User,
+    @Param('id') dishId: string,
+  ): Promise<DeleteDishOutput> {
+    return this.restaurantsService.deleteDish(owner, +dishId);
   }
 }

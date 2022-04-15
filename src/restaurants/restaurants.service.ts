@@ -3,7 +3,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entites/users.entiy';
 import { ILike, Repository } from 'typeorm';
 import { AllCategoriesOutput, CategoryOutput } from './dtos/category.dto';
-import { CreateDishDto, CreateDishOutput } from './dtos/dish.dto';
+import {
+  CreateDishDto,
+  CreateDishOutput,
+  DeleteDishOutput,
+  EditDishDto,
+  EditDishOuput,
+} from './dtos/dish.dto';
 import {
   CreateRestaurantDto,
   CreateRestaurantOutput,
@@ -226,6 +232,25 @@ export class RestaurantsService {
       return { ok: true, dish };
     } catch (error) {
       return { ok: false, error: "Couldn't create dish" };
+    }
+  }
+
+  async deleteDish(owner: User, dishId: number): Promise<DeleteDishOutput> {
+    try {
+      const dish = await this.dishRepository.findOne({
+        where: { id: dishId },
+        relations: ['restaurant'],
+      });
+      if (!dish) {
+        return { ok: false, error: 'Dish not found' };
+      }
+      if (dish.restaurant.ownerId !== owner.id) {
+        return { ok: false, error: "You can't delete the dish" };
+      }
+      await this.dishRepository.delete(dishId);
+      return { ok: true };
+    } catch (error) {
+      return { ok: false, error: "Couldn't delete the dish" };
     }
   }
 }
