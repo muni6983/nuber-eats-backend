@@ -37,9 +37,9 @@ export class Order extends CoreEntity {
   @JoinTable()
   dishes: Dish[];
 
-  @Column()
+  @Column({ nullable: true })
   @IsNumber()
-  total: number;
+  total?: number;
 
   @Column({ type: 'enum', enum: OrderStatus })
   status: OrderStatus;
