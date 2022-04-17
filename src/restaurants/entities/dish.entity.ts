@@ -9,7 +9,7 @@ import { CoreEntity } from 'src/common/entites/core.entity';
 import { Column, Entity, ManyToOne, OneToMany, RelationId } from 'typeorm';
 import { Restaurant } from './restaurant.entity';
 
-class DishChoice {
+export class DishChoice {
   @Column()
   @IsString()
   name: string;
@@ -18,7 +18,7 @@ class DishChoice {
   @IsNumber()
   extra?: number;
 }
-class DishOption {
+export class DishOption {
   @Column()
   @IsString()
   name: string;
