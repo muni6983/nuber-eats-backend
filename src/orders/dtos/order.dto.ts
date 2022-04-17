@@ -1,12 +1,22 @@
-import { PickType } from '@nestjs/mapped-types';
-import { IsNumber } from 'class-validator';
+import { IsArray, IsEnum, IsNumber, IsOptional } from 'class-validator';
 import { MutationOutput } from 'src/common/dtos/output.dto';
-import { Column } from 'typeorm';
-import { Order } from '../entities/order.entity';
+import { DishOption } from 'src/restaurants/entities/dish.entity';
 
-export class CreateOrderDto extends PickType(Order, ['items']) {
+class CreateOrderItemDto {
+  @IsNumber()
+  dishId: number;
+
+  @IsEnum(DishOption)
+  @IsOptional()
+  options?: DishOption;
+}
+
+export class CreateOrderDto {
   @IsNumber()
   restaurantId: number;
+
+  @IsArray()
+  options: CreateOrderItemDto[];
 }
 
 export class CreateOrderOutput extends MutationOutput {}
