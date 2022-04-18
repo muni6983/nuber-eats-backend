@@ -15,6 +15,7 @@ import { OrderItem } from './order-item.entity';
 export enum OrderStatus {
   PENDING = 'PENDING',
   COOKING = 'COOKING',
+  COOKED = 'COOKED',
   PICKEDUP = 'PICKEDUP',
   DELIVERED = 'DELIVERED',
 }

@@ -1,10 +1,20 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { AuthUser } from 'src/auth/auth-user.decorator';
 import { Role } from 'src/auth/role.decorator';
 import { User } from 'src/users/entites/users.entiy';
 import {
   CreateOrderDto,
   CreateOrderOutput,
+  EditOrderDto,
+  EditOrderOutput,
   GetOrderOutput,
   GetOrdersOutput,
 } from './dtos/order.dto';
@@ -40,5 +50,15 @@ export class OrderController {
     @Body() createOrderDto: CreateOrderDto,
   ): Promise<CreateOrderOutput> {
     return this.orderService.createOrder(customer, createOrderDto);
+  }
+
+  @Patch('/:id')
+  @Role(['Any'])
+  editOrder(
+    @Param('id') orderId: string,
+    @AuthUser() user: User,
+    @Body() editOrderDto: EditOrderDto,
+  ): Promise<EditOrderOutput> {
+    return this.orderService.editOrder(+orderId, user, editOrderDto);
   }
 }

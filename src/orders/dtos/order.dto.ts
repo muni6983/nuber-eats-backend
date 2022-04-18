@@ -1,3 +1,4 @@
+import { PickType } from '@nestjs/mapped-types';
 import { IsArray, IsEnum, IsNumber, IsOptional } from 'class-validator';
 import { MutationOutput } from 'src/common/dtos/output.dto';
 import { DishOption } from 'src/restaurants/entities/dish.entity';
@@ -30,6 +31,13 @@ export class GetOrdersOutput extends MutationOutput {
 }
 
 export class GetOrderOutput extends MutationOutput {
+  @IsOptional()
+  order?: Order;
+}
+
+export class EditOrderDto extends PickType(Order, ['status']) {}
+
+export class EditOrderOutput extends MutationOutput {
   @IsOptional()
   order?: Order;
 }

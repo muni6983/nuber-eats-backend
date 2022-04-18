@@ -7,6 +7,8 @@ import { Repository } from 'typeorm';
 import {
   CreateOrderDto,
   CreateOrderOutput,
+  EditOrderDto,
+  EditOrderOutput,
   GetOrderOutput,
   GetOrdersOutput,
 } from './dtos/order.dto';
@@ -53,6 +55,20 @@ export class OrderService {
     }
   }
 
+  canSeeOrder(user: User, order: Order): boolean {
+    let canSee = true;
+    if (user.role === UserRole.CLIENT && order.customerId !== user.id) {
+      canSee = false;
+    }
+    if (user.role === UserRole.DELIVERY && order.driverId !== user.id) {
+      canSee = false;
+    }
+    if (user.role === UserRole.OWNER && order.restaurant.ownerId !== user.id) {
+      canSee = false;
+    }
+    return canSee;
+  }
+
   async getOrder(orderId: number, user: User): Promise<GetOrderOutput> {
     try {
       const order = await this.orderRepository.findOne(orderId, {
@@ -61,20 +77,8 @@ export class OrderService {
       if (!order) {
         return { ok: false, error: 'Order not found' };
       }
-      let canSee = true;
-      if (user.role === UserRole.CLIENT && order.customerId !== user.id) {
-        canSee = false;
-      }
-      if (user.role === UserRole.DELIVERY && order.driverId !== user.id) {
-        canSee = false;
-      }
-      if (
-        user.role === UserRole.OWNER &&
-        order.restaurant.ownerId !== user.id
-      ) {
-        canSee = false;
-      }
-      if (!canSee) {
+
+      if (!this.canSeeOrder(user, order)) {
         return { ok: false, error: "You can't see that." };
       }
       return { ok: true, order };
@@ -142,6 +146,53 @@ export class OrderService {
       return { ok: true };
     } catch (error) {
       return { ok: false, error: "Couldn't create order'" };
+    }
+  }
+
+  async editOrder(
+    orderId: number,
+    user: User,
+    { status }: EditOrderDto,
+  ): Promise<EditOrderOutput> {
+    try {
+      const order = await this.orderRepository.findOne(orderId, {
+        relations: ['restaurant'],
+      });
+      if (!order) {
+        return { ok: false, error: 'Order not found' };
+      }
+      if (!this.canSeeOrder(user, order)) {
+        return { ok: false, error: "You can't see that." };
+      }
+      let canEdit = true;
+      if (user.role === UserRole.CLIENT) {
+        canEdit = false;
+      }
+      if (user.role === UserRole.OWNER) {
+        if (status !== OrderStatus.COOKING && status !== OrderStatus.COOKED) {
+          canEdit = false;
+        }
+      }
+      if (user.role === UserRole.DELIVERY) {
+        if (
+          status !== OrderStatus.PICKEDUP &&
+          status !== OrderStatus.DELIVERED
+        ) {
+          canEdit = false;
+        }
+      }
+      if (!canEdit) {
+        return { ok: false, error: "You can't edit this'" };
+      }
+      await this.orderRepository.save([
+        {
+          id: orderId,
+          status,
+        },
+      ]);
+      return { ok: true };
+    } catch (error) {
+      return { ok: false, error: "Couldn't edit order'" };
     }
   }
 }
