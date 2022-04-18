@@ -2,6 +2,7 @@ import { IsArray, IsEnum, IsNumber, IsOptional } from 'class-validator';
 import { MutationOutput } from 'src/common/dtos/output.dto';
 import { DishOption } from 'src/restaurants/entities/dish.entity';
 import { OrderItemOption } from '../entities/order-item.entity';
+import { Order } from '../entities/order.entity';
 
 class CreateOrderItemDto {
   @IsNumber()
@@ -22,3 +23,8 @@ export class CreateOrderDto {
 }
 
 export class CreateOrderOutput extends MutationOutput {}
+
+export class GetOrdersOutput extends MutationOutput {
+  @IsOptional()
+  orders?: Order[];
+}
