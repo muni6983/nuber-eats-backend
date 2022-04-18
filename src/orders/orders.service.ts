@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 import {
   CreateOrderDto,
   CreateOrderOutput,
+  GetOrderOutput,
   GetOrdersOutput,
 } from './dtos/order.dto';
 import { OrderItem } from './entities/order-item.entity';
@@ -49,6 +50,36 @@ export class OrderService {
       return { ok: true, orders };
     } catch (error) {
       return { ok: false, error: "Couldn't load orders" };
+    }
+  }
+
+  async getOrder(orderId: number, user: User): Promise<GetOrderOutput> {
+    try {
+      const order = await this.orderRepository.findOne(orderId, {
+        relations: ['restaurant'],
+      });
+      if (!order) {
+        return { ok: false, error: 'Order not found' };
+      }
+      let canSee = true;
+      if (user.role === UserRole.CLIENT && order.customerId !== user.id) {
+        canSee = false;
+      }
+      if (user.role === UserRole.DELIVERY && order.driverId !== user.id) {
+        canSee = false;
+      }
+      if (
+        user.role === UserRole.OWNER &&
+        order.restaurant.ownerId !== user.id
+      ) {
+        canSee = false;
+      }
+      if (!canSee) {
+        return { ok: false, error: "You can't see that." };
+      }
+      return { ok: true, order };
+    } catch (error) {
+      return { ok: false, error: "Couldn't load order'" };
     }
   }
 

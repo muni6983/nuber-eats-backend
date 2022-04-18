@@ -1,10 +1,11 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { AuthUser } from 'src/auth/auth-user.decorator';
 import { Role } from 'src/auth/role.decorator';
 import { User } from 'src/users/entites/users.entiy';
 import {
   CreateOrderDto,
   CreateOrderOutput,
+  GetOrderOutput,
   GetOrdersOutput,
 } from './dtos/order.dto';
 import { OrderStatus } from './entities/order.entity';
@@ -21,6 +22,15 @@ export class OrderController {
     @Query('status') status: OrderStatus,
   ): Promise<GetOrdersOutput> {
     return this.orderService.getOrders(user, status);
+  }
+
+  @Get('/:id')
+  @Role(['Any'])
+  getOrder(
+    @Param('id') orderId: string,
+    @AuthUser() user: User,
+  ): Promise<GetOrderOutput> {
+    return this.orderService.getOrder(+orderId, user);
   }
 
   @Post()

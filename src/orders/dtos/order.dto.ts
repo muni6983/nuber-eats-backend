@@ -28,3 +28,8 @@ export class GetOrdersOutput extends MutationOutput {
   @IsOptional()
   orders?: Order[];
 }
+
+export class GetOrderOutput extends MutationOutput {
+  @IsOptional()
+  order?: Order;
+}
