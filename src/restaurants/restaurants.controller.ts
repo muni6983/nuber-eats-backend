@@ -60,7 +60,7 @@ export class RestaurantsController {
   }
 
   @Post()
-  @Role(['Any'])
+  @Role(['OWNER'])
   createRestaurant(
     @Body() createRestaurantDto: CreateRestaurantDto,
     @AuthUser() authUser: User,

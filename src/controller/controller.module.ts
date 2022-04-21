@@ -8,8 +8,9 @@ import { UsersModule } from 'src/users/users.module';
 @Module({
   imports: [UsersModule, RestaurantsModule, AuthModule, OrdersModule],
 })
-export class ControllerModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(JwtMiddleware).forRoutes('*');
-  }
-}
+export class ControllerModule {}
+// implements NestModule {
+//   configure(consumer: MiddlewareConsumer) {
+//     consumer.apply(JwtMiddleware).forRoutes('*');
+//   }
+// }
