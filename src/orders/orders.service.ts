@@ -155,9 +155,7 @@ export class OrderService {
     { status }: EditOrderDto,
   ): Promise<EditOrderOutput> {
     try {
-      const order = await this.orderRepository.findOne(orderId, {
-        relations: ['restaurant'],
-      });
+      const order = await this.orderRepository.findOne(orderId);
       if (!order) {
         return { ok: false, error: 'Order not found' };
       }
@@ -195,4 +193,6 @@ export class OrderService {
       return { ok: false, error: "Couldn't edit order'" };
     }
   }
+
+  // driver가 order 가져가면 해당 order에 driver 넣는거 추가해야함
 }
