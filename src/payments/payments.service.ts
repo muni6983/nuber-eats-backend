@@ -42,6 +42,11 @@ export class PaymentService {
           restaurant,
         }),
       );
+      restaurant.isPromoted = true;
+      const date = new Date();
+      date.setDate(date.getDate() + 7);
+      restaurant.promoteUntil = date;
+      this.restaurantRepository.save(restaurant);
       return { ok: true, payment };
     } catch (error) {
       return { ok: false, error: "Couldn't load payment'" };

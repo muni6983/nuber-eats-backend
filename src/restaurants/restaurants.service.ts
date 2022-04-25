@@ -41,6 +41,9 @@ export class RestaurantsService {
         await this.restaurantsRepository.findAndCount({
           take: 25,
           skip: (page - 1) * 25,
+          order: {
+            isPromoted: 'DESC',
+          },
         });
       return {
         ok: true,
@@ -202,6 +205,9 @@ export class RestaurantsService {
         where: { category },
         take: 25,
         skip: (page - 1) * 25,
+        order: {
+          isPromoted: 'DESC',
+        },
       });
       category.restaurants = restaurants;
       return { ok: true, category };
