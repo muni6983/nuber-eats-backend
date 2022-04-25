@@ -12,3 +12,8 @@ export class CreatePaymentOutput extends MutationOutput {
   @IsOptional()
   payment?: Payment;
 }
+
+export class GetAllPaymentsOutput extends MutationOutput {
+  @IsOptional()
+  payments?: Payment[];
+}

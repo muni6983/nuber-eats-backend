@@ -3,7 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Restaurant } from 'src/restaurants/entities/restaurant.entity';
 import { User } from 'src/users/entites/users.entiy';
 import { Repository } from 'typeorm';
-import { CreatePaymentDto, CreatePaymentOutput } from './dtos/payment.dto';
+import {
+  CreatePaymentDto,
+  CreatePaymentOutput,
+  GetAllPaymentsOutput,
+} from './dtos/payment.dto';
 import { Payment } from './entities/payment.entity';
 
 @Injectable()
@@ -39,6 +43,18 @@ export class PaymentService {
       return { ok: true, payment };
     } catch (error) {
       return { ok: false, error: "Couldn't load payment'" };
+    }
+  }
+
+  async getAllPayments(owner: User): Promise<GetAllPaymentsOutput> {
+    try {
+      const payments = await this.paymentsRepository.find({ user: owner });
+      if (!payments) {
+        return { ok: false, error: 'Payments not found' };
+      }
+      return { ok: true, payments };
+    } catch (error) {
+      return { ok: false, error: "Couldn't load all payments'" };
     }
   }
 }
