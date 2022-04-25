@@ -1,4 +1,4 @@
-import { IsString } from 'class-validator';
+import { IsBoolean, IsDate, IsString } from 'class-validator';
 import { CoreEntity } from 'src/common/entites/core.entity';
 import { Order } from 'src/orders/entities/order.entity';
 import { User } from 'src/users/entites/users.entiy';
@@ -40,4 +40,12 @@ export class Restaurant extends CoreEntity {
   @IsString()
   @RelationId((restaurant: Restaurant) => restaurant.owner)
   ownerId: number;
+
+  @Column({ default: false })
+  @IsBoolean()
+  isPromoted: boolean;
+
+  @Column({ nullable: true })
+  @IsDate()
+  promoteUntil: Date;
 }
