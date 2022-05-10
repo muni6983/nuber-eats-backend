@@ -12,6 +12,7 @@ import { Role } from 'src/auth/role.decorator';
 import { MutationOutput } from 'src/common/dtos/output.dto';
 import {
   CreateUserDto,
+  CreateUserOutput,
   LoginDto,
   LoginOutput,
   UpdateUserDto,
@@ -40,7 +41,7 @@ export class UsersController {
     return this.usersService.findById(id);
   }
 
-  @Patch()
+  @Patch('/edit-profile')
   @Role(['Any'])
   updateMe(
     @Body() updateUserDto: UpdateUserDto,
@@ -61,8 +62,8 @@ export class UsersController {
     return this.usersService.verifyEmail(verifyEmailDto.code);
   }
 
-  @Post()
-  createUser(@Body() createUserDto: CreateUserDto): Promise<MutationOutput> {
+  @Post('/sign-up')
+  createUser(@Body() createUserDto: CreateUserDto): Promise<CreateUserOutput> {
     return this.usersService.createUser(createUserDto);
   }
 }

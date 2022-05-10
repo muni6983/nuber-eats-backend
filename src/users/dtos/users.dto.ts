@@ -11,6 +11,10 @@ export class CreateUserDto extends OmitType(User, [
   'updatedAt',
 ]) {}
 
+export class CreateUserOutput extends MutationOutput {
+  user?: User;
+}
+
 export class LoginDto extends PickType(User, ['email', 'password']) {}
 export class LoginOutput extends MutationOutput {
   @IsString()

@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import {
   CreateUserDto,
+  CreateUserOutput,
   LoginDto,
   UpdateUserDto,
   UserOutput,
@@ -22,11 +23,11 @@ export class UsersService {
     private readonly mailService: MailService,
   ) {}
 
-  async createUser(
-    createUserDto: CreateUserDto,
-  ): Promise<{ ok: boolean; error?: string }> {
+  async createUser(createUserDto: CreateUserDto): Promise<CreateUserOutput> {
     try {
-      const exist = await this.usersRepository.findOne(createUserDto.email);
+      const exist = await this.usersRepository.findOne({
+        where: { email: createUserDto.email },
+      });
       if (exist) {
         return { ok: false, error: 'There is a user with that email already' };
       }
@@ -37,7 +38,7 @@ export class UsersService {
         this.verificationRepository.create({ user }),
       );
       this.mailService.sendVerificationEmail(user.email, verification.code);
-      return { ok: true };
+      return { ok: true, user };
     } catch (e) {
       return { ok: false, error: "Couldn't create account" };
     }

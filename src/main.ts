@@ -12,6 +12,7 @@ async function bootstrap() {
       transform: true,
     }),
   );
+  app.enableCors();
   // 이건 functional component만 가능
   // app.use(JwtMiddleware);
   await app.listen(8000);
