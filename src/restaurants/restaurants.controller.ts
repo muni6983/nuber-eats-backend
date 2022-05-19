@@ -59,6 +59,14 @@ export class RestaurantsController {
     return this.restaurantsService.getRestaurantById(+id);
   }
 
+  @Get('/slug/:slug')
+  getRestaurantsBySlug(
+    @Param('slug') slugName: string,
+    @Query('page') page: number,
+  ): Promise<RestaurantOuput> {
+    return this.restaurantsService.getRestaurantsBySlug(slugName, page);
+  }
+
   @Post()
   @Role(['OWNER'])
   createRestaurant(
@@ -95,6 +103,9 @@ export class RestaurantsController {
   }
 }
 
+//
+//
+
 @Controller('categories')
 export class CategoryController {
   constructor(private readonly restaurantsService: RestaurantsService) {}
@@ -104,14 +115,17 @@ export class CategoryController {
     return this.restaurantsService.getAllCategories(page);
   }
 
-  @Get('/slug')
+  @Get('/:slug')
   findCategoryBySlug(
-    @Query('slug') slugName: string,
+    @Param('slug') slugName: string,
     @Query('page') page: number,
   ): Promise<CategoryOutput> {
     return this.restaurantsService.findCategoryBySlug(slugName, page);
   }
 }
+
+//
+//
 
 @Controller('dishes')
 export class DishController {

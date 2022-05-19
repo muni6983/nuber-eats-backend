@@ -17,6 +17,7 @@ import {
   EditRestaurantDto,
   EditRestaurantOutput,
   FindRestaurantOutput,
+  RestaurantOuput,
   SearchRestaurantOutput,
 } from './dtos/restaurant.dto';
 import { Category } from './entities/category.entity';
@@ -39,15 +40,16 @@ export class RestaurantsService {
     try {
       const [restaurants, totalResults] =
         await this.restaurantsRepository.findAndCount({
-          take: 25,
-          skip: (page - 1) * 25,
+          relations: ['category'],
+          take: 6,
+          skip: (page - 1) * 6,
           order: {
             isPromoted: 'DESC',
           },
         });
       return {
         ok: true,
-        totalPages: Math.ceil(totalResults / 25),
+        totalPages: Math.ceil(totalResults / 6),
         totalResults,
         results: restaurants,
       };
@@ -60,7 +62,7 @@ export class RestaurantsService {
     try {
       const restaurant = await this.restaurantsRepository.findOne(
         { id },
-        { relations: ['owner', 'menu'] },
+        { relations: ['owner', 'menu', 'category'] },
       );
       if (!restaurant) {
         return { ok: false, error: 'Restaurant not found' };
@@ -81,18 +83,55 @@ export class RestaurantsService {
           where: {
             name: ILike(`%${query}%`),
           },
-          take: 25,
-          skip: (page - 1) * 25,
+          relations: ['category'],
+          take: 6,
+          skip: (page - 1) * 6,
         });
 
       return {
         ok: true,
-        totalPages: Math.ceil(totalResults / 25),
+        totalPages: Math.ceil(totalResults / 6),
         totalResults,
-        restaurants,
+        results: restaurants,
       };
     } catch (error) {
       return { ok: false, error: "Couldn't search for restaurants" };
+    }
+  }
+
+  async getRestaurantsBySlug(
+    slugName: string,
+    page: number,
+  ): Promise<RestaurantOuput> {
+    try {
+      const category = await this.categoryRepository.findOne(
+        {
+          slug: slugName,
+        },
+        { relations: ['restaurants'] },
+      );
+      if (!category) {
+        return { ok: false, error: 'Category not found' };
+      }
+      console.log('category : ', category);
+      const [restaurants, totalResults] =
+        await this.restaurantsRepository.findAndCount({
+          where: { category },
+          relations: ['category'],
+          take: 6,
+          skip: (page - 1) * 6,
+          order: {
+            isPromoted: 'DESC',
+          },
+        });
+      return {
+        ok: true,
+        totalPages: Math.ceil(totalResults / 6),
+        totalResults,
+        results: restaurants,
+      };
+    } catch (error) {
+      return { ok: false, error: "Couldn't load restaurants'" };
     }
   }
 
@@ -173,14 +212,14 @@ export class RestaurantsService {
     try {
       const [categories, totalResults] =
         await this.categoryRepository.findAndCount({
-          take: 25,
-          skip: (page - 1) * 25,
+          take: 6,
+          skip: (page - 1) * 6,
         });
       return {
         ok: true,
-        totalPages: Math.ceil(totalResults / 25),
+        totalPages: Math.ceil(totalResults / 6),
         totalResults,
-        categories,
+        results: categories,
       };
     } catch (error) {
       return { ok: false, error: "Couldn't load categories" };
@@ -201,21 +240,25 @@ export class RestaurantsService {
       if (!category) {
         return { ok: false, error: 'Category not found' };
       }
-      const restaurants = await this.restaurantsRepository.find({
-        where: { category },
-        take: 25,
-        skip: (page - 1) * 25,
-        order: {
-          isPromoted: 'DESC',
-        },
-      });
+      const [restaurants, totalResults] =
+        await this.restaurantsRepository.findAndCount({
+          where: { category },
+          take: 6,
+          skip: (page - 1) * 6,
+          order: {
+            isPromoted: 'DESC',
+          },
+        });
       category.restaurants = restaurants;
-      return { ok: true, category };
+      return {
+        ok: true,
+        totalPages: Math.ceil(totalResults / 6),
+        totalResults,
+        results: category,
+      };
     } catch (error) {
       return { ok: false, error: "Couldn't load category'" };
     }
-    // return 에 totalPages 추가해줘야하는데
-    //해당 카테고리를 가진 restaurant 개수를 어떻게 받아와야할지 모르겠음
   }
 
   async createDish(

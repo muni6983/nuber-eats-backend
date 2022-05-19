@@ -46,5 +46,5 @@ export class SearchRestaurantDto {
 export class SearchRestaurantOutput extends PaginationOutput {
   @Column({ nullable: true })
   @IsArray()
-  restaurants?: Restaurant[];
+  results?: Restaurant[];
 }
